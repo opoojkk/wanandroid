@@ -8,7 +8,7 @@ part of 'WeChatItemModel.dart';
 
 WeChatItemModel _$WeChatItemModelFromJson(Map<String, dynamic> json) {
   return WeChatItemModel(
-      (json['children'] as List)?.map((e) => e as String)?.toList(),
+      (json['children'] as List).map((e) => e as String).toList(),
       json['courseId'] as int,
       json['id'] as int,
       json['name'] as String,

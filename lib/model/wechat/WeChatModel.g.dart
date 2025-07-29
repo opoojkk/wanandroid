@@ -9,10 +9,9 @@ part of 'WeChatModel.dart';
 WeChatModel _$WeChatModelFromJson(Map<String, dynamic> json) {
   return WeChatModel(
       (json['data'] as List)
-          ?.map((e) => e == null
-              ? null
-              : WeChatItemModel.fromJson(e as Map<String, dynamic>))
-          ?.toList(),
+          .takeWhile((e) => e != null)
+          .map((e) => WeChatItemModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       json['errorCode'] as int,
       json['errorMsg'] as String);
 }

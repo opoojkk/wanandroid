@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Router;
 import 'package:flutter/services.dart';
 import 'package:wanandroid/api/Api.dart';
 import 'package:wanandroid/common/GlobalConfig.dart';
@@ -42,8 +42,7 @@ class ArticleItemPage extends StatelessWidget {
   }
 
   Widget _buildListViewItem(ArticleItemModel item) {
-    var widget = (null != item.envelopePic &&
-            item.envelopePic.isNotEmpty &&
+    var widget = (item.envelopePic.isNotEmpty &&
             !item.envelopePic.endsWith(Api.DEFAULT_PROJECT_IMG)) //默认图片就不显示了
         ? Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -75,10 +74,13 @@ class ArticleItemPage extends StatelessWidget {
   }
 
   List<Widget> _buildItemLeftColumns(ArticleItemModel item) {
-    List<Widget> list = List();
+    List<Widget> list =[];
     list.add(Text(
       item.title,
-      style: TextStyle(fontSize: 16.0, color: GlobalConfig.color_black, fontWeight: FontWeight.w500),
+      style: TextStyle(
+          fontSize: 16.0,
+          color: GlobalConfig.color_black,
+          fontWeight: FontWeight.w500),
       textAlign: TextAlign.left,
     ));
     if (item.desc.length > item.title.length) {
@@ -89,7 +91,7 @@ class ArticleItemPage extends StatelessWidget {
       ));
     }
     var author = item.author;
-    if (null != author && author.length > 0) {
+    if (author.length > 0) {
       author = "@$author";
     } else
       author = "";
@@ -104,7 +106,9 @@ class ArticleItemPage extends StatelessWidget {
             size: 13.0,
             color: GlobalConfig.color_dark_gray,
           ),
-          Text(" ${item.niceDate} $author", style: TextStyle(color: GlobalConfig.color_dark_gray, fontSize: 13.0))
+          Text(" ${item.niceDate} $author",
+              style: TextStyle(
+                  color: GlobalConfig.color_dark_gray, fontSize: 13.0))
         ],
       ),
     ));
@@ -121,15 +125,18 @@ class ArticleItemPage extends StatelessWidget {
   }
 
   List<Widget> _buildTagsAndDate(ArticleItemModel item) {
-    List<Widget> list = List();
-    item.tags?.forEach((tag) {
+    List<Widget> list = [];
+    item.tags.forEach((tag) {
       list.add(StrokeWidget(
           strokeWidth: 0.5,
           edgeInsets: EdgeInsets.symmetric(horizontal: 2.0, vertical: 0.0),
           color: GlobalConfig.color_tags,
           childWidget: Text(
             tag.name,
-            style: TextStyle(fontSize: 11.0, color: GlobalConfig.color_tags, fontWeight: FontWeight.w100),
+            style: TextStyle(
+                fontSize: 11.0,
+                color: GlobalConfig.color_tags,
+                fontWeight: FontWeight.w100),
           )));
     });
     String chapterNameStr =

@@ -1,7 +1,10 @@
 class DateUtil {
-  static DateTime formatExpiresTime(String str) {
+  static DateTime? formatExpiresTime(String str) {
     var expiresTime =
-        RegExp("Expires[^;]*;").stringMatch(str).split(" ")[1].split("-");
+        RegExp("Expires[^;]*;").stringMatch(str)?.split(" ")[1].split("-");
+    if (expiresTime == null || expiresTime.length < 3) {
+      return null;
+    }
     var year = expiresTime[2];
     var day = expiresTime[0];
     var mounth = _getMounthByStr(expiresTime[1]);

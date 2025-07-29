@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Router;
 import 'package:wanandroid/common/GlobalConfig.dart';
 import 'package:wanandroid/common/Router.dart';
 import 'package:wanandroid/common/Snack.dart';
@@ -17,8 +17,8 @@ class LoginRegisterPage extends StatefulWidget {
 
 class _LoginRegisterPagePageState extends State<LoginRegisterPage> {
   bool isLogin = true;
-  ClearableInputField _userNameInputForm;
-  ClearableInputField _psdInputForm;
+  late ClearableInputField _userNameInputForm;
+  late ClearableInputField _psdInputForm;
   TextEditingController _userNameController = TextEditingController();
   TextEditingController _psdController = TextEditingController();
 
@@ -53,18 +53,18 @@ class _LoginRegisterPagePageState extends State<LoginRegisterPage> {
   }
 
   Widget _buildLoginBtn(BuildContext context) {
-    return RaisedButton(
-      padding: const EdgeInsets.all(8.0),
-      color: GlobalConfig.colorPrimary,
-      textColor: Colors.white,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(8.0),
+        elevation: 4.0,
+        textStyle: TextStyle(color: Colors.white),
+        backgroundColor: GlobalConfig.colorPrimary,
+      ),
       child: Text(isLogin ? "登录" : "注册并登录"),
-      elevation: 4.0,
       onPressed: () {
         var _userNameStr = _userNameController.text;
         var _psdStr = _psdController.text;
-        if (null == _userNameStr ||
-            null == _psdStr ||
-            _userNameStr.length < 6 ||
+        if (_userNameStr.length < 6 ||
             _psdStr.length < 6) {
           Snack.show(context, "账号/密码不符合标准");
         } else {
@@ -107,7 +107,7 @@ class _LoginRegisterPagePageState extends State<LoginRegisterPage> {
   }
 
   Widget _buildRegBtn() {
-    return FlatButton(
+    return ElevatedButton(
       child: Text(
         isLogin ? '注册新账号' : '直接登录',
         style: TextStyle(fontSize: 15.0, color: Colors.black54),
@@ -122,8 +122,8 @@ class _LoginRegisterPagePageState extends State<LoginRegisterPage> {
 
   @override
   void dispose() {
-    _userNameController?.dispose();
-    _psdController?.dispose();
+    _userNameController.dispose();
+    _psdController.dispose();
     super.dispose();
   }
 }

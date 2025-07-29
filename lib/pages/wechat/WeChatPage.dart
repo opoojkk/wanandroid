@@ -18,10 +18,10 @@ class WeChatPage extends StatefulWidget {
 
 class _WeChatPageState extends State<WeChatPage>
     with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
-  List<WeChatItemModel> _list = List();
+  List<WeChatItemModel> _list = [];
   Map<int, Pair<ArticleListPage, GlobalKey<ArticleListPageState>>>
       _itemListPageMap = Map();
-  TabController _tabController;
+  late TabController _tabController;
   var _controller = TextEditingController();
   String _searchKey = "";
   bool _isSearching = false;
@@ -41,7 +41,7 @@ class _WeChatPageState extends State<WeChatPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: _isSearching ? _buildSearchingAppbar() : _buildNormalAppbar(),
       body: _list.length <= 0
           ? null
@@ -85,7 +85,7 @@ class _WeChatPageState extends State<WeChatPage>
       title: Theme(
           data: originTheme.copyWith(
             hintColor: GlobalConfig.color_white_a80,
-            textTheme: TextTheme(subhead: TextStyle(color: Colors.white)),
+            textTheme: TextTheme(titleMedium: TextStyle(color: Colors.white)),
           ),
           child: ClearableInputField(
             hintTxt: "搜索公众号历史文章",
@@ -100,15 +100,15 @@ class _WeChatPageState extends State<WeChatPage>
     );
   }
 
-  void handleRefreshSearchKey({String key}) {
-    if (null != key) _searchKey = key;
+  void handleRefreshSearchKey({ String? key}) {
+    _searchKey = key??"";
     _itemListPageMap[_list[_currentItemIndex].id]
         ?.second
-        ?.currentState
+        .currentState
         ?.handleRefresh();
   }
 
-  TabBar _buildSubTitle() {
+  TabBar? _buildSubTitle() {
     return _list.length <= 0
         ? null
         : TabBar(
@@ -125,15 +125,15 @@ class _WeChatPageState extends State<WeChatPage>
   }
 
   List<Widget> _buildTabs() {
-    return _list?.map((WeChatItemModel _bean) {
+    return _list.map((WeChatItemModel _bean) {
       return Tab(
-        text: _bean?.name,
+        text: _bean.name,
       );
-    })?.toList();
+    }).toList();
   }
 
   List<Widget> _buildPages(BuildContext context) {
-    return _list?.map((_bean) {
+    return _list.map((_bean) {
       if (!_itemListPageMap.containsKey(_bean.id)) {
         var key = GlobalKey<ArticleListPageState>();
         _itemListPageMap[_bean.id] = Pair(
@@ -147,8 +147,8 @@ class _WeChatPageState extends State<WeChatPage>
                 }),
             key);
       }
-      return _itemListPageMap[_bean.id].first;
-    })?.toList();
+      return _itemListPageMap[_bean.id]!.first;
+    }).toList();
   }
 
   bool _keepAlive() {
@@ -181,8 +181,8 @@ class _WeChatPageState extends State<WeChatPage>
 
   @override
   void dispose() {
-    _tabController?.dispose();
-    _controller?.dispose();
+    _tabController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 }

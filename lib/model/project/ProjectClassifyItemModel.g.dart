@@ -9,7 +9,7 @@ part of 'ProjectClassifyItemModel.dart';
 ProjectClassifyItemModel _$ProjectClassifyItemModelFromJson(
     Map<String, dynamic> json) {
   return ProjectClassifyItemModel(
-      children: (json['children'] as List)?.map((e) => e as String)?.toList(),
+      children: (json['children'] as List).map((e) => e as String).toList(),
       courseId: json['courseId'] as int,
       id: json['id'] as int,
       name: json['name'] as String,

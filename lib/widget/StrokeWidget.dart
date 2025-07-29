@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 class StrokeWidget extends StatelessWidget {
   final Color color;
   final Widget childWidget;
-  EdgeInsets edgeInsets;
+  EdgeInsets? edgeInsets;
   final double strokeWidth;
   final double strokeRadius;
 
   StrokeWidget(
-      {Key key,
-      @required this.childWidget,
+      {Key? key,
+      required this.childWidget,
       this.color = Colors.black,
-      this.edgeInsets,
+       this.edgeInsets,
       this.strokeWidth = 1.0,
       this.strokeRadius = 5.0})
       : super(key: key) {

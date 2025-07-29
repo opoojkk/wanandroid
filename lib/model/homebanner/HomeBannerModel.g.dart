@@ -9,10 +9,9 @@ part of 'HomeBannerModel.dart';
 HomeBannerModel _$HomeBannerModelFromJson(Map<String, dynamic> json) {
   return HomeBannerModel(
       (json['data'] as List)
-          ?.map((e) => e == null
-              ? null
-              : HomeBannerItemModel.fromJson(e as Map<String, dynamic>))
-          ?.toList(),
+          .takeWhile((e) => e != null)
+          .map((e) => HomeBannerItemModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       json['errorCode'] as int,
       json['errorMsg'] as String);
 }

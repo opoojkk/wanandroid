@@ -8,7 +8,6 @@ import 'package:wanandroid/model/knowledge_systems/KnowledgeSystemsChildModel.da
 import 'package:wanandroid/model/knowledge_systems/KnowledgeSystemsModel.dart';
 import 'package:wanandroid/model/knowledge_systems/KnowledgeSystemsParentModel.dart';
 import 'package:wanandroid/pages/article_list/ArticleListPage.dart';
-import 'package:wanandroid/widget/EmptyHolder.dart';
 
 class KnowledgeSystemsPage extends StatefulWidget {
   @override
@@ -19,11 +18,11 @@ class KnowledgeSystemsPage extends StatefulWidget {
 
 class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  double _screenWidth = MediaQueryData.fromWindow(ui.window).size.width;
-  KnowledgeSystemsModel _treeModel;
-  TabController _tabControllerOutter;
+  double _screenWidth = MediaQueryData.fromView(ui.window).size.width;
+  late KnowledgeSystemsModel _treeModel;
+  late TabController _tabControllerOutter;
   Map<int, TabController> _tabControllerInnerMaps = Map();
-  KnowledgeSystemsParentModel _currentTreeRootModel;
+  late KnowledgeSystemsParentModel _currentTreeRootModel;
 
   @override
   void initState() {
@@ -46,25 +45,20 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
     );
   }
 
-  PreferredSize _appBarBottom;
+  PreferredSize? _appBarBottom;
 
   PreferredSize _buildTitleBottom() {
-    if (null == _appBarBottom && null != _treeModel)
+    if (null == _appBarBottom)
       _appBarBottom = PreferredSize(
         child: _buildTitleTabs(),
         preferredSize: Size(_screenWidth, kToolbarHeight * 2),
       );
-    return _appBarBottom;
+    return _appBarBottom!;
   }
 
   Widget _buildTitleTabs() {
-    if (null == _treeModel) {
-      return EmptyHolder(
-        msg: "Loading",
-      );
-    }
     _tabControllerOutter =
-        TabController(length: _treeModel?.data?.length, vsync: this);
+        TabController(length: _treeModel.data.length ?? 0, vsync: this);
     _tabControllerOutter.addListener(() {
       setState(() {
         _currentTreeRootModel = _treeModel.data[_tabControllerOutter.index];
@@ -102,23 +96,19 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
   }
 
   List<Widget> _buildRootTabs() {
-    return _treeModel.data?.map((KnowledgeSystemsParentModel model) {
-      return Tab(
-        text: model?.name,
-      );
-    })?.toList();
+    return _treeModel.data.map((KnowledgeSystemsParentModel model) {
+          return Tab(
+            text: model.name,
+          );
+        }).toList() ??
+        [];
   }
 
   List<Widget> _buildSecondTitle() {
-    return _treeModel.data?.map(_buildSingleSecondTitle)?.toList();
+    return _treeModel.data.map(_buildSingleSecondTitle).toList() ?? [];
   }
 
   Widget _buildSingleSecondTitle(KnowledgeSystemsParentModel model) {
-    if (null == model) {
-      return EmptyHolder(
-        msg: "Loading",
-      );
-    }
     if (null == _tabControllerInnerMaps[model.id])
       _tabControllerInnerMaps[model.id] =
           TabController(length: model.children.length, vsync: this);
@@ -137,18 +127,14 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
 
   List<Widget> _buildSecondTabs(KnowledgeSystemsParentModel model) {
     return model.children.map((KnowledgeSystemsChildModel model) {
-      return Tab(
-        text: model?.name,
-      );
-    })?.toList();
+          return Tab(
+            text: model.name,
+          );
+        }).toList() ??
+        [];
   }
 
   Widget _buildBody(KnowledgeSystemsParentModel model) {
-    if (null == model) {
-      return EmptyHolder(
-        msg: "Loading",
-      );
-    }
     if (null == _tabControllerInnerMaps[model.id])
       _tabControllerInnerMaps[model.id] =
           TabController(length: model.children.length, vsync: this);
@@ -160,7 +146,7 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
   }
 
   List<Widget> _buildPages(KnowledgeSystemsParentModel model) {
-    return model.children?.map(_buildSinglePage)?.toList();
+    return model.children.map(_buildSinglePage).toList() ?? [];
   }
 
   Widget _buildSinglePage(KnowledgeSystemsChildModel model) {
@@ -184,9 +170,9 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
 
   @override
   void dispose() {
-    _tabControllerOutter?.dispose();
-    _tabControllerInnerMaps?.forEach((_, controller) {
-      controller?.dispose();
+    _tabControllerOutter.dispose();
+    _tabControllerInnerMaps.forEach((_, controller) {
+      controller.dispose();
     });
     super.dispose();
   }

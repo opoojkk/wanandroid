@@ -43,7 +43,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
       title: Theme(
           data: originTheme.copyWith(
             hintColor: GlobalConfig.color_white_a80,
-            textTheme: TextTheme(subhead: TextStyle(color: Colors.white)),
+            textTheme: TextTheme(titleMedium: TextStyle(color: Colors.white)),
           ),
           child: ClearableInputField(
             hintTxt: loadingMsg,
@@ -51,7 +51,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
             border: InputBorder.none,
             onchange: (str) {
               _key = str;
-              _itemListPage.currentState.handleRefresh();
+              _itemListPage.currentState?.handleRefresh();
             },
           )),
     );
@@ -59,7 +59,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _controller.dispose();
     super.dispose();
   }
 }

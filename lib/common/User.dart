@@ -8,11 +8,11 @@ import 'package:wanandroid/model/login/UserModel.dart';
 import 'package:wanandroid/utils/DateUtil.dart';
 
 class User {
-  String userName;
-  String password;
-  String cookie;
-  DateTime cookieExpiresTime;
-  Map<String, String> _headerMap;
+  String? userName;
+  String? password;
+  String? cookie;
+  late DateTime cookieExpiresTime;
+  Map<String, String>? _headerMap;
 
   static final User _singleton = User._internal();
 
@@ -23,29 +23,24 @@ class User {
   User._internal();
 
   bool isLogin() {
-    return null != userName &&
-        userName.length >= 6 &&
-        null != password &&
-        password.length >= 6;
+    return (userName?.length ?? 0) >= 6 && (password?.length ?? 0) >= 6;
   }
 
   void logout() {
-    Sp.putUserName(null);
-    Sp.putPassword(null);
+    Sp.putUserName("");
+    Sp.putPassword("");
     userName = null;
     password = null;
     _headerMap = null;
   }
 
-  void refreshUserData({Function callback}) {
+  void refreshUserData({Function? callback}) {
     Sp.getPassword((pw) {
       this.password = pw;
     });
     Sp.getUserName((str) {
       this.userName = str;
-      if (null != callback) {
-        callback();
-      }
+      callback?.call();
     });
     Sp.getCookie((str) {
       this.cookie = str;
@@ -64,27 +59,28 @@ class User {
     });
   }
 
-  void login({Function callback}) {
-    _saveUserInfo(CommonService().login(userName, password), userName, password,
+  void login({Function? callback}) {
+    _saveUserInfo(CommonService().login(userName, password), userName ?? "",
+        password ?? "",
         callback: callback);
   }
 
-  void register({Function callback}) {
-    _saveUserInfo(
-        CommonService().register(userName, password), userName, password,
+  void register({Function? callback}) {
+    _saveUserInfo(CommonService().register(userName, password), userName ?? "",
+        password ?? "",
         callback: callback);
   }
 
   void _saveUserInfo(
       Future<Response> responseF, String userName, String password,
-      {Function callback}) {
+      {Function? callback}) {
     responseF.then((response) {
       var userModel = UserModel.fromJson(response.data);
       if (userModel.errorCode == 0) {
         Sp.putUserName(userName);
         Sp.putPassword(password);
         String cookie = "";
-        DateTime expires;
+        DateTime expires = DateTime.now();
         response.headers.forEach((String name, List<String> values) {
           if (name == "set-cookie") {
             cookie = json
@@ -93,17 +89,15 @@ class User {
                 .replaceAll("\"\]", "")
                 .replaceAll("\",\"", "; ");
             try {
-              expires = DateUtil.formatExpiresTime(cookie);
-            } catch (e) {
-              expires = DateTime.now();
-            }
+              expires = DateUtil.formatExpiresTime(cookie) ?? DateTime.now();
+            } catch (e) {}
           }
         });
         Sp.putCookie(cookie);
         Sp.putCookieExpires(expires.toIso8601String());
-        if (null != callback) callback(true, null);
+        callback?.call(true, null);
       } else {
-        if (null != callback) callback(false, userModel.errorMsg);
+        callback?.call(false, userModel.errorMsg);
       }
     });
   }
@@ -115,10 +109,6 @@ class User {
   }
 
   Map<String, String> getHeader() {
-    if (null == _headerMap) {
-      _headerMap = Map();
-      _headerMap["Cookie"] = cookie;
-    }
-    return _headerMap;
+    return _headerMap ?? Map();
   }
 }

@@ -18,10 +18,10 @@ class ProjectPage extends StatefulWidget {
 
 class _ProjectPageState extends State<ProjectPage>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  List<ProjectClassifyItemModel> _list = List();
+  List<ProjectClassifyItemModel> _list = [];
   var _maxCachePageNums = 5;
   var _cachedPageNum = 0;
-  TabController _tabbarController;
+  late TabController _tabbarController;
 
   @override
   bool get wantKeepAlive => true;
@@ -44,12 +44,10 @@ class _ProjectPageState extends State<ProjectPage>
     );
   }
 
-  PreferredSizeWidget _buildTabBar() {
+  PreferredSizeWidget? _buildTabBar() {
     if (_list.length <= 0) {
       return null;
     }
-    if (null == _tabbarController)
-      _tabbarController = TabController(length: _list.length, vsync: this);
     return TabBar(
         controller: _tabbarController,
         labelColor: Colors.white,
@@ -63,18 +61,18 @@ class _ProjectPageState extends State<ProjectPage>
   }
 
   Widget _buildBody() {
-    return (null == _tabbarController || _list.length <= 0)
+    return (_list.length <= 0)
         ? EmptyHolder()
         : TabBarView(controller: _tabbarController, children: _buildPages());
   }
 
   List<Widget> _buildTabs() {
-    return _list?.map(_buildSingleTab)?.toList();
+    return _list.map(_buildSingleTab).toList();
   }
 
   Widget _buildSingleTab(ProjectClassifyItemModel bean) {
     return Tab(
-      text: bean?.name,
+      text: bean.name,
     );
   }
 
@@ -99,7 +97,7 @@ class _ProjectPageState extends State<ProjectPage>
   }
 
   List<Widget> _buildPages() {
-    return _list?.map(_buildSinglePage)?.toList();
+    return _list.map(_buildSinglePage).toList();
   }
 
   void _loadClassifysDelay(int delays) async {
@@ -130,7 +128,7 @@ class _ProjectPageState extends State<ProjectPage>
 
   @override
   void dispose() {
-    _tabbarController?.dispose();
+    _tabbarController.dispose();
     super.dispose();
   }
 }

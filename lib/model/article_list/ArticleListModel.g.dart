@@ -8,9 +8,7 @@ part of 'ArticleListModel.dart';
 
 ArticleListModel _$ArticleListModelFromJson(Map<String, dynamic> json) {
   return ArticleListModel(
-      json['data'] == null
-          ? null
-          : ArticleListDataModel.fromJson(json['data'] as Map<String, dynamic>),
+      ArticleListDataModel.fromJson(json['data'] as Map<String, dynamic>),
       json['errorCode'] as int,
       json['errorMsg'] as String);
 }

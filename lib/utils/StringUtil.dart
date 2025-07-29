@@ -1,6 +1,6 @@
 class StringUtil {
   static bool isNullOrEmpty(String str) {
-    return str == null || str.length <= 0;
+    return str.length <= 0;
   }
 
   static String strClean(String str) {

@@ -10,10 +10,10 @@ KnowledgeSystemsParentModel _$KnowledgeSystemsParentModelFromJson(
     Map<String, dynamic> json) {
   return KnowledgeSystemsParentModel(
       (json['children'] as List)
-          ?.map((e) => e == null
-              ? null
-              : KnowledgeSystemsChildModel.fromJson(e as Map<String, dynamic>))
-          ?.toList(),
+          .takeWhile((e) => e != null)
+          .map((e) =>
+              KnowledgeSystemsChildModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       json['courseId'] as int,
       json['id'] as int,
       json['name'] as String,

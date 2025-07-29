@@ -3,18 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:wanandroid/fonts/IconF.dart';
 
 class ClearableInputField extends StatefulWidget {
-  final ValueChanged onchange;
-  final ValueChanged onSubmit;
-  final String hintTxt;
+  final ValueChanged? onchange;
+  final ValueChanged? onSubmit;
+  final String? hintTxt;
   final bool autoFocus;
-  final TextStyle textStyle;
-  final TextStyle hintStyle;
-  final InputBorder border;
-  final TextEditingController controller;
-  final TextInputType inputType;
+  final TextStyle? textStyle;
+  final TextStyle? hintStyle;
+  final InputBorder? border;
+  final TextEditingController? controller;
+  final TextInputType? inputType;
   final bool obscureText;
-  final EdgeInsetsGeometry padding;
-  final Color fillColor;
+  final EdgeInsetsGeometry? padding;
+  final Color? fillColor;
   final bool showPrefixIcon;
 
   ClearableInputField(
@@ -38,13 +38,11 @@ class ClearableInputField extends StatefulWidget {
 
 class _ClearableInputFieldState extends State<ClearableInputField> {
   bool _showClearIcon = false;
-  FocusNode _focusNode;
+  late FocusNode _focusNode;
 
   @override
   Widget build(BuildContext context) {
-    var _controller = (null == widget.controller)
-        ? TextEditingController()
-        : widget.controller;
+    var _controller = widget.controller ?? TextEditingController();
     _focusNode = FocusNode();
     return TextField(
       obscureText: widget.obscureText,
@@ -83,13 +81,13 @@ class _ClearableInputFieldState extends State<ClearableInputField> {
         _showClearIcon = newState;
       });
     }
-    widget.onchange(str);
+    widget.onchange?.call(str);
   }
 
   void onSubmit(String str) {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
 //    FocusScope.of(context).requestFocus(new FocusNode());
-    widget.onSubmit(str);
+    widget.onSubmit?.call(str);
   }
 
   Widget _buildDefaultClearIcon(
@@ -98,11 +96,11 @@ class _ClearableInputFieldState extends State<ClearableInputField> {
       child: InkWell(
         child: Icon(
           IconF.wrong,
-          color: Theme.of(context).textTheme.subhead.color,
+          color: Theme.of(context).textTheme.headlineMedium?.color,
         ),
         onTap: () {
           controller.clear();
-          widget.onchange("");
+          widget.onchange?.call("");
           FocusScope.of(context).requestFocus(_focusNode);
           setState(() {
             _showClearIcon = false;
@@ -114,6 +112,7 @@ class _ClearableInputFieldState extends State<ClearableInputField> {
   }
 
   Widget _buildDefaultPrefixIcon() {
-    return Icon(IconF.search, color: Theme.of(context).textTheme.subhead.color);
+    return Icon(IconF.search,
+        color: Theme.of(context).textTheme.headlineMedium?.color);
   }
 }

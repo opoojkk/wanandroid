@@ -14,8 +14,7 @@ class Pair<F, S> {
   }
 
   @override
-  int get hashCode =>
-      null == first ? 0 : first.hashCode ^ null == second ? 0 : second.hashCode;
+  int get hashCode => (first?.hashCode ?? 0) ^ (second?.hashCode ?? 0);
 
   static Pair<A, B> create<A, B>(A a, B b) {
     return Pair<A, B>(a, b);

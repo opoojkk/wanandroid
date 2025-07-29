@@ -8,9 +8,7 @@ part of 'UserModel.dart';
 
 UserModel _$UserModelFromJson(Map<String, dynamic> json) {
   return UserModel(
-      json['data'] == null
-          ? null
-          : UserDetailModel.fromJson(json['data'] as Map<String, dynamic>),
+      UserDetailModel.fromJson(json['data'] as Map<String, dynamic>),
       json['errorCode'] as int,
       json['errorMsg'] as String);
 }

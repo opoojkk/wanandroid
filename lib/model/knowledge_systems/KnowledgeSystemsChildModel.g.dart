@@ -9,7 +9,7 @@ part of 'KnowledgeSystemsChildModel.dart';
 KnowledgeSystemsChildModel _$KnowledgeSystemsChildModelFromJson(
     Map<String, dynamic> json) {
   return KnowledgeSystemsChildModel(
-      (json['children'] as List)?.map((e) => e as String)?.toList(),
+      (json['children'] as List).map((e) => e as String).toList(),
       json['courseId'] as int,
       json['id'] as int,
       json['name'] as String,

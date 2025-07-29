@@ -4,25 +4,25 @@ part 'ProjectClassifyItemModel.g.dart';
 
 @JsonSerializable()
 class ProjectClassifyItemModel {
-  List<String> children;
-  int courseId;
-  int id;
-  String name;
-  int order;
-  int parentChapterId;
-  int visible;
-  String url;
+  List<String>? children;
+  int? courseId;
+  int? id;
+  String? name;
+  int? order;
+  int? parentChapterId;
+  int? visible;
+  String? url;
 
   ProjectClassifyItemModel(
       {this.children,
       this.courseId,
       this.id,
-      String name,
+      String? name,
       this.order,
       this.parentChapterId,
       this.visible,
       this.url}) {
-    this.name = name.replaceAll("&amp;", "&");
+    this.name = name?.replaceAll("&amp;", "&");
   }
 
   factory ProjectClassifyItemModel.fromJson(Map<String, dynamic> json) =>

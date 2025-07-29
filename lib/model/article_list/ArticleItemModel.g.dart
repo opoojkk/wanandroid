@@ -26,10 +26,10 @@ ArticleItemModel _$ArticleItemModelFromJson(Map<String, dynamic> json) {
       json['superChapterId'] as int,
       json['superChapterName'] as String,
       (json['tags'] as List)
-          ?.map((e) => e == null
-              ? null
-              : ArticleTagModel.fromJson(e as Map<String, dynamic>))
-          ?.toList(),
+              .takeWhile((e) => e != null)
+              .map((e) => ArticleTagModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
       json['title'] as String,
       json['type'] as int,
       json['userId'] as int,

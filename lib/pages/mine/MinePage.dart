@@ -1,9 +1,8 @@
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Router;
 import 'package:wanandroid/api/Api.dart';
-import 'package:wanandroid/api/CommonService.dart';
 import 'package:wanandroid/common/GlobalConfig.dart';
 import 'package:wanandroid/common/Router.dart';
 import 'package:wanandroid/common/User.dart';
@@ -19,11 +18,11 @@ class MinePage extends StatefulWidget {
 }
 
 class _MinePageState extends State<MinePage> {
-  double _screenWidth = MediaQueryData.fromWindow(ui.window).size.width;
+  double _screenWidth = MediaQueryData.fromView(ui.window).size.width;
   GlobalKey<QuickTopFloatBtnState> _quickTopFloatBtnKey = new GlobalKey();
-  ArticleListPage _itemListPage;
+  late ArticleListPage _itemListPage;
   GlobalKey<ArticleListPageState> _itemListPageKey = new GlobalKey();
-  ScrollController _controller;
+  late ScrollController _controller;
 
   @override
   Widget build(BuildContext context) {
@@ -115,11 +114,12 @@ class _MinePageState extends State<MinePage> {
     return AlertDialog(
       content: Text("确定退出登录？"),
       actions: <Widget>[
-        RaisedButton(
-          elevation: 0.0,
-          child: Text("OK"),
-          color: Colors.transparent,
-          textColor: GlobalConfig.colorPrimary,
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            elevation: 0.0,
+            textStyle: TextStyle(color: GlobalConfig.colorPrimary),
+            backgroundColor: Colors.transparent,
+          ),
           onPressed: () {
             User().logout();
             User().refreshUserData(callback: () {
@@ -127,11 +127,13 @@ class _MinePageState extends State<MinePage> {
             });
             Navigator.pop(context);
           },
+          child: Text("OK"),
         ),
-        RaisedButton(
-          elevation: 0.0,
-          color: Colors.transparent,
-          textColor: GlobalConfig.colorPrimary,
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              elevation: 0.0,
+              textStyle: TextStyle(color: GlobalConfig.colorPrimary),
+              backgroundColor: Colors.transparent),
           child: Text("No No No"),
           onPressed: () {
             Navigator.pop(context);
@@ -142,29 +144,16 @@ class _MinePageState extends State<MinePage> {
   }
 
   String getUserName() {
-    return (!User().isLogin()) ? "Login" : User().userName;
+    return (!User().isLogin()) ? "Login" : User().userName!;
   }
 
   Widget _buildMineBody() {
-    if (null == _itemListPage) {
-      _itemListPage = ArticleListPage(
-        key: _itemListPageKey,
-        keepAlive: true,
-        selfControl: false,
-        showQuickTop: (show) {
-          _quickTopFloatBtnKey.currentState.refreshVisible(show);
-        },
-        request: (page) {
-          return CommonService().getCollectListData(page);
-        },
-      );
-    }
     return _itemListPage;
   }
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _controller.dispose();
     super.dispose();
   }
 }

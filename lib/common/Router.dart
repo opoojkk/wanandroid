@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wanandroid/model/article_list/ArticleItemModel.dart';
 import 'package:wanandroid/pages/login/LoginRegisterPage.dart';
@@ -29,7 +28,7 @@ class Router {
     }));
   }
 
-  Future<PageRouteBuilder> openLogin(BuildContext context) {
+  Future openLogin(BuildContext context) {
     return Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
       return LoginRegisterPage();

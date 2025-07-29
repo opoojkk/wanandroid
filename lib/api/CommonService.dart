@@ -69,7 +69,7 @@ class CommonService {
         data: formData, options: _getOptions());
   }
 
-  Future<Response> login(String username, String password) async {
+  Future<Response> login(String? username, String? password) async {
     FormData formData = new FormData.fromMap({
       "username": "$username",
       "password": "$password",
@@ -77,7 +77,7 @@ class CommonService {
     return await Dio().post(Api.LOGIN, data: formData);
   }
 
-  Future<Response> register(String username, String password) async {
+  Future<Response> register(String? username, String? password) async {
     FormData formData = new FormData.fromMap({
       "username": "$username",
       "password": "$password",

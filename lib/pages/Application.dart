@@ -18,28 +18,28 @@ class ApplicationPage extends StatefulWidget {
 class _ApplicationPageState extends State<ApplicationPage>
     with SingleTickerProviderStateMixin {
   int _page = 0;
-  PageController _pageController;
+  late PageController _pageController;
 
   final List<BottomNavigationBarItem> _bottomTabs = <BottomNavigationBarItem>[
     BottomNavigationBarItem(
         icon: Icon(IconF.blog),
-        title: Text(GlobalConfig.homeTab),
+        label: GlobalConfig.homeTab,
         backgroundColor: GlobalConfig.colorPrimary),
     BottomNavigationBarItem(
         icon: Icon(IconF.project),
-        title: Text(GlobalConfig.projectTab),
+        label: GlobalConfig.projectTab,
         backgroundColor: GlobalConfig.colorPrimary),
     BottomNavigationBarItem(
         icon: Icon(IconF.wechat),
-        title: Text(GlobalConfig.weChatTab),
+        label: GlobalConfig.weChatTab,
         backgroundColor: GlobalConfig.colorPrimary),
     BottomNavigationBarItem(
         icon: Icon(IconF.tree),
-        title: Text(GlobalConfig.knowledgeSystemsTab),
+        label: GlobalConfig.knowledgeSystemsTab,
         backgroundColor: GlobalConfig.colorPrimary),
     BottomNavigationBarItem(
         icon: Icon(IconF.me),
-        title: Text(GlobalConfig.mineTab),
+        label: GlobalConfig.mineTab,
         backgroundColor: GlobalConfig.colorPrimary),
   ];
 

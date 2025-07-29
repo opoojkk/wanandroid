@@ -14,17 +14,17 @@ typedef Future<Response> RequestData(int page);
 typedef void ShowQuickTop(bool show);
 
 class ArticleListPage extends StatefulWidget {
-  final Widget header;
+  final Widget? header;
   final RequestData request;
-  final String emptyMsg;
-  final bool keepAlive;
-  final ShowQuickTop showQuickTop;
-  final bool selfControl;
+  final String? emptyMsg;
+  final bool? keepAlive;
+  final ShowQuickTop? showQuickTop;
+  final bool? selfControl;
 
   ArticleListPage(
-      {Key key,
+      {Key? key,
       this.header,
-      @required this.request,
+      required this.request,
       this.emptyMsg,
       this.selfControl = true,
       this.showQuickTop,
@@ -39,16 +39,16 @@ class ArticleListPage extends StatefulWidget {
 
 class ArticleListPageState extends State<ArticleListPage>
     with AutomaticKeepAliveClientMixin {
-  List<ArticleItemModel> _listData = List();
-  List<int> _listDataId = List();
+  List<ArticleItemModel> _listData = [];
+  List<int> _listDataId = [];
   GlobalKey<QuickTopFloatBtnState> _quickTopFloatBtnKey = new GlobalKey();
   int _listDataPage = -1;
   var _haveMoreData = true;
-  double _screenHeight;
-  ListView listView;
+  double _screenHeight = 0;
+  late ListView listView;
 
   @override
-  bool get wantKeepAlive => widget.keepAlive;
+  bool get wantKeepAlive => widget.keepAlive ?? false;
 
   @override
   void initState() {
@@ -56,7 +56,7 @@ class ArticleListPageState extends State<ArticleListPage>
     _loadNextPage();
   }
 
-  void handleScroll(double offset, {ScrollController controller}) {
+  void handleScroll(double offset, {ScrollController? controller}) {
     ((null == controller) ? _controller : controller)?.animateTo(offset,
         duration: Duration(milliseconds: 200), curve: Curves.fastOutSlowIn);
   }
@@ -99,7 +99,7 @@ class ArticleListPageState extends State<ArticleListPage>
     );
     return (null == widget.showQuickTop)
         ? Scaffold(
-            resizeToAvoidBottomPadding: false,
+            resizeToAvoidBottomInset: false,
             body: body,
             floatingActionButton: QuickTopFloatBtn(
               key: _quickTopFloatBtnKey,
@@ -116,32 +116,29 @@ class ArticleListPageState extends State<ArticleListPage>
         scrollNotification.metrics.maxScrollExtent) {
       _loadNextPage();
     }
-    if (null == _screenHeight || _screenHeight <= 0) {
-      _screenHeight = MediaQueryData.fromWindow(ui.window).size.height;
+    if (_screenHeight <= 0) {
+      _screenHeight = MediaQueryData.fromView(ui.window).size.height;
     }
     if (scrollNotification.metrics.axisDirection == AxisDirection.down &&
         _screenHeight >= 10 &&
         scrollNotification.metrics.pixels >= _screenHeight) {
       if (null != widget.showQuickTop) {
-        widget.showQuickTop(true);
+        widget.showQuickTop?.call(true);
       } else {
-        _quickTopFloatBtnKey.currentState.refreshVisible(true);
+        _quickTopFloatBtnKey.currentState?.refreshVisible.call(true);
       }
     } else {
       if (null != widget.showQuickTop) {
-        widget.showQuickTop(false);
+        widget.showQuickTop?.call(false);
       } else {
-        _quickTopFloatBtnKey.currentState.refreshVisible(false);
+        _quickTopFloatBtnKey.currentState?.refreshVisible(false);
       }
     }
     return false;
   }
 
   Widget _buildListViewItemLayout(BuildContext context, int index) {
-    if (null == _listData ||
-        _listData.length <= 0 ||
-        index < 0 ||
-        index >= _listData.length) {
+    if (_listData.length <= 0 || index < 0 || index >= _listData.length) {
       return Container();
     }
     return ArticleItemPage(_listData[index]);
@@ -182,10 +179,10 @@ class ArticleListPageState extends State<ArticleListPage>
     return result;
   }
 
-  ScrollController _controller;
+  ScrollController? _controller;
 
-  ScrollController getControllerForListView() {
-    if (widget.selfControl) {
+  ScrollController? getControllerForListView() {
+    if (widget.selfControl ?? false) {
       if (null == _controller) _controller = ScrollController();
       return _controller;
     } else {
@@ -198,7 +195,7 @@ class ArticleListPageState extends State<ArticleListPage>
     return widget.request(page).then((response) {
       var newList = ArticleListModel.fromJson(response.data).data.datas;
       var originListLength = _listData.length;
-      if (null != newList && newList.length > 0) {
+      if (newList.length > 0) {
 //        _listData.addAll(newList);
         //防止添加进重复数据
         newList.forEach((item) {
@@ -215,8 +212,8 @@ class ArticleListPageState extends State<ArticleListPage>
   @override
   void dispose() {
     _controller?.dispose();
-    _listData?.clear();
-    _listDataId?.clear();
+    _listData.clear();
+    _listDataId.clear();
     super.dispose();
   }
 }

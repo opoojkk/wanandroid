@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:wanandroid/fonts/IconF.dart';
 
 class BackBtn extends StatelessWidget {
-  const BackBtn({Key key, this.color}) : super(key: key);
-  final Color color;
+  const BackBtn({Key? key, this.color}) : super(key: key);
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {

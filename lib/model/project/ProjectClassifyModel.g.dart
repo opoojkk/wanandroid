@@ -9,10 +9,10 @@ part of 'ProjectClassifyModel.dart';
 ProjectClassifyModel _$ProjectClassifyModelFromJson(Map<String, dynamic> json) {
   return ProjectClassifyModel(
       (json['data'] as List)
-          ?.map((e) => e == null
-              ? null
-              : ProjectClassifyItemModel.fromJson(e as Map<String, dynamic>))
-          ?.toList(),
+          .takeWhile((e) => e != null)
+          .map((e) =>
+              ProjectClassifyItemModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       json['errorCode'] as int,
       json['errorMsg'] as String);
 }
