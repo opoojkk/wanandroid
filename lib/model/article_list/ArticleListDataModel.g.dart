@@ -8,7 +8,7 @@ part of 'ArticleListDataModel.dart';
 
 ArticleListDataModel _$ArticleListDataModelFromJson(Map<String, dynamic> json) {
   return ArticleListDataModel(
-      json['curpage'] as int,
+      json['curPage'] as int,
       (json['datas'] as List)
           .takeWhile((e) => e != null)
           .map((e) => ArticleItemModel.fromJson(e as Map<String, dynamic>))

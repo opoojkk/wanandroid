@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
 // import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wanandroid/fonts/IconF.dart';
 import 'package:wanandroid/model/article_list/ArticleItemModel.dart';
 import 'package:wanandroid/utils/CollectUtil.dart';
 import 'package:wanandroid/widget/BackBtn.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewPage extends StatefulWidget {
   final String? url;
@@ -30,6 +32,7 @@ class WebViewPage extends StatefulWidget {
 
 class _WebViewState extends State<WebViewPage> {
   String? toastMsg;
+  WebViewController? _controller;
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -61,8 +64,13 @@ class _WebViewState extends State<WebViewPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller == null) {
+      _controller = WebViewController()
+        ..loadRequest(Uri.parse(widget.url ?? "about:blank"));
+    }
+
     return Scaffold(
-      backgroundColor: Colors.green,
+      // backgroundColor: Colors.green,
       appBar: AppBar(
         title: Text(
           toastMsg ?? widget.getTitle(),
@@ -70,7 +78,7 @@ class _WebViewState extends State<WebViewPage> {
           style: null != toastMsg
               ? TextStyle(
                   fontSize: 15.0,
-                  color: Colors.yellow,
+                  // color: Colors.yellow,
                 )
               : null,
         ),
@@ -80,7 +88,7 @@ class _WebViewState extends State<WebViewPage> {
           _buildOpenWithBrowser(),
         ],
       ),
-        // body: WebViewWidget(controller: _controller),
+      body: WebViewWidget(controller: _controller!),
       // floatingActionButton: favoriteButton(),
     );
   }

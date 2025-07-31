@@ -40,6 +40,7 @@ class _WeChatPageState extends State<WeChatPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: _isSearching ? _buildSearchingAppbar() : _buildNormalAppbar(),
@@ -100,8 +101,8 @@ class _WeChatPageState extends State<WeChatPage>
     );
   }
 
-  void handleRefreshSearchKey({ String? key}) {
-    _searchKey = key??"";
+  void handleRefreshSearchKey({String? key}) {
+    _searchKey = key ?? "";
     _itemListPageMap[_list[_currentItemIndex].id]
         ?.second
         .currentState

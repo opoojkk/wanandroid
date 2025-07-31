@@ -1,6 +1,5 @@
 import 'dart:ui' as ui;
 
-// import 'package:banner/banner.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart' hide Router;
@@ -22,6 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
   late List<HomeBannerItemModel> _bannerData;
+  var _loading = true;
 
   @override
   bool get wantKeepAlive => true;
@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(GlobalConfig.homeTab),
@@ -57,57 +58,45 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildBanner(BuildContext context) {
-    if (_bannerData.length <= 0) {
+    if (_loading) {
+      return Center();
       return Center(
         child: Text("Loading"),
       );
     } else {
       double screenWidth = MediaQueryData.fromView(ui.window).size.width;
-      // return Container(
-      //   height: screenWidth * 500 / 900,
-      //   width: screenWidth,
-      //   child: Card(
-      //     elevation: 5.0,
-      //     shape: Border(),
-      //     margin: EdgeInsets.all(0.0),
-      //     child: BannerView(
-      //       data: _bannerData,
-      //       delayTime: 10,
-      //       onBannerClickListener: (int index, dynamic itemData) {
-      //         HomeBannerItemModel item = itemData;
-      //         Router().openWeb(context, item.url, item.title);
-      //       },
-      //       buildShowView: (index, data) {
-      //         return CachedNetworkImage(
-      //           fadeInDuration: Duration(milliseconds: 0),
-      //           fadeOutDuration: Duration(milliseconds: 0),
-      //           imageUrl: (data as HomeBannerItemModel).imagePath,
-      //         );
-      //       },
-      //     ),
-      //   ),
-      // );
-      return Swiper(
-        itemBuilder: (BuildContext context, int index) {
-          return CachedNetworkImage(
-            fadeInDuration: Duration(milliseconds: 0),
-            fadeOutDuration: Duration(milliseconds: 0),
-            imageUrl: _bannerData[index].imagePath,
-          );
-        },
-        itemCount: _bannerData.length,
-        pagination: SwiperPagination(),
-        autoplay: true,
-        onTap: (index) {
-          HomeBannerItemModel item = _bannerData[index];
-          Router().openWeb(context, item.url, item.title);
-        },
+      return Container(
+        height: screenWidth * 500 / 900,
+        width: screenWidth,
+        child: Swiper(
+          itemHeight: screenWidth * 500 / 900,
+          itemWidth: screenWidth,
+          itemBuilder: (BuildContext context, int index) {
+            return GestureDetector(
+              onTap: () {
+                HomeBannerItemModel item = _bannerData[index];
+                Router().openWeb(context, item.url, item.title);
+              },
+              child: CachedNetworkImage(
+                fadeInDuration: Duration(milliseconds: 0),
+                fadeOutDuration: Duration(milliseconds: 0),
+                imageUrl: _bannerData[index].imagePath,
+                fit: BoxFit.fill,
+              ),
+            );
+          },
+          itemCount: _bannerData.length,
+          pagination: SwiperPagination(),
+          autoplay: true,
+        ),
       );
     }
   }
 
   void _loadBannerData() {
     CommonService().getBanner((HomeBannerModel _bean) {
+      // 暂时这么写，状态管理不完善
+      _loading = false;
       if (_bean.data.length > 0) {
         setState(() {
           _bannerData = _bean.data;
