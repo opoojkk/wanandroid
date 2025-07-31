@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
-// import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wanandroid/fonts/IconF.dart';
 import 'package:wanandroid/model/article_list/ArticleItemModel.dart';
@@ -34,39 +32,12 @@ class _WebViewState extends State<WebViewPage> {
   String? toastMsg;
   WebViewController? _controller;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-// //      scrollBar: true,
-// //      withZoom: true,
-// //      withLocalStorage: true,
-// //      withLocalUrl: true,
-//       url: widget.getUrl(),
-//       appBar: AppBar(
-//         title: Text(
-//           toastMsg ?? widget.getTitle(),
-//           textAlign: null != toastMsg ? TextAlign.center : TextAlign.start,
-//           style: null != toastMsg
-//               ? TextStyle(
-//                   fontSize: 15.0,
-//                   color: Colors.yellow,
-//                 )
-//               : null,
-//         ),
-//         leading: BackBtn(),
-//         actions: <Widget>[
-//           _buildStared(context),
-//           _buildOpenWithBrowser(),
-//         ],
-//       ),
-//     );
-//   }
-
   @override
   Widget build(BuildContext context) {
     if (_controller == null) {
       _controller = WebViewController()
-        ..loadRequest(Uri.parse(widget.url ?? "about:blank"));
+        ..loadRequest(
+            Uri.parse(widget.url ?? widget.articleBean?.link ?? "about:blank"));
     }
 
     return Scaffold(
