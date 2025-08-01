@@ -6,10 +6,11 @@ import 'package:flutter/material.dart' hide Router;
 import 'package:wanandroid/api/CommonService.dart';
 import 'package:wanandroid/common/GlobalConfig.dart';
 import 'package:wanandroid/common/Router.dart';
-import 'package:wanandroid/fonts/IconF.dart';
 import 'package:wanandroid/model/homebanner/HomeBannerItemModel.dart';
 import 'package:wanandroid/model/homebanner/HomeBannerModel.dart';
 import 'package:wanandroid/pages/article_list/ArticleListPage.dart';
+
+import '../KeepAlivePage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,13 +19,9 @@ class HomePage extends StatefulWidget {
   }
 }
 
-class _HomePageState extends State<HomePage>
-    with AutomaticKeepAliveClientMixin {
+class _HomePageState extends KeepAliveState<HomePage> {
   late List<HomeBannerItemModel> _bannerData;
   var _loading = true;
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -37,11 +34,13 @@ class _HomePageState extends State<HomePage>
     super.build(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(GlobalConfig.homeTab),
-        centerTitle: true,
+        title: Text(
+          GlobalConfig.homeTab,
+          style: TextStyle(fontSize: 18),
+        ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(IconF.search),
+            icon: Icon(Icons.search),
             onPressed: () {
               Router().openSearch(context);
             },
@@ -53,6 +52,7 @@ class _HomePageState extends State<HomePage>
         request: (page) {
           return CommonService().getArticleListData(page);
         },
+        keepAlive: wantKeepAlive,
       ),
     );
   }
@@ -104,4 +104,14 @@ class _HomePageState extends State<HomePage>
       }
     });
   }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    print('Page disposed!');
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

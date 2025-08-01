@@ -24,6 +24,8 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
   Map<int, TabController> _tabControllerInnerMaps = Map();
   late KnowledgeSystemsParentModel _currentTreeRootModel;
 
+  var loading = true;
+
   @override
   void initState() {
     super.initState();
@@ -35,9 +37,18 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    if (loading) {
+      return Center(
+        child: Text("loading..."),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(GlobalConfig.knowledgeSystemsTab),
+        title: Text(
+          GlobalConfig.knowledgeSystemsTab,
+          style: TextStyle(color: Colors.grey[700], fontSize: 16.0),
+        ),
         centerTitle: true,
         bottom: _buildTitleBottom(),
       ),
@@ -71,13 +82,13 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
         SizedBox(
           child: TabBar(
             controller: _tabControllerOutter,
-            labelColor: Colors.white,
+            labelColor: Colors.grey[700],
             isScrollable: true,
-            unselectedLabelColor: GlobalConfig.color_white_a80,
+            unselectedLabelColor: Colors.grey[400],
             indicatorSize: TabBarIndicatorSize.label,
             indicatorPadding: EdgeInsets.only(bottom: 2.0),
             indicatorWeight: 1.0,
-            indicatorColor: Colors.white,
+            indicatorColor: Colors.grey[700],
             tabs: _buildRootTabs(),
           ),
           width: _screenWidth,
@@ -114,24 +125,23 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
           TabController(length: model.children.length, vsync: this);
     return TabBar(
       controller: _tabControllerInnerMaps[model.id],
-      labelColor: Colors.white,
+      labelColor: Colors.grey[700],
       isScrollable: true,
-      unselectedLabelColor: GlobalConfig.color_white_a80,
+      unselectedLabelColor: Colors.grey[400],
       indicatorSize: TabBarIndicatorSize.label,
       indicatorPadding: EdgeInsets.only(bottom: 2.0),
       indicatorWeight: 1.0,
-      indicatorColor: Colors.white,
+      indicatorColor: Colors.grey[700],
       tabs: _buildSecondTabs(model),
     );
   }
 
   List<Widget> _buildSecondTabs(KnowledgeSystemsParentModel model) {
     return model.children.map((KnowledgeSystemsChildModel model) {
-          return Tab(
-            text: model.name,
-          );
-        }).toList() ??
-        [];
+      return Tab(
+        text: model.name,
+      );
+    }).toList();
   }
 
   Widget _buildBody(KnowledgeSystemsParentModel model) {
@@ -161,16 +171,19 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
 
   void _loadTreeList() async {
     CommonService().getTrees((KnowledgeSystemsModel _bean) {
-      setState(() {
-        _treeModel = _bean;
-        _currentTreeRootModel = _treeModel.data[0];
-      });
+      if (mounted) {
+        setState(() {
+          loading = false;
+          _treeModel = _bean;
+          _currentTreeRootModel = _treeModel.data[0];
+        });
+      }
     });
   }
 
   @override
   void dispose() {
-    _tabControllerOutter.dispose();
+    // _tabControllerOutter.dispose();
     _tabControllerInnerMaps.forEach((_, controller) {
       controller.dispose();
     });

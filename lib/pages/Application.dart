@@ -5,8 +5,6 @@ import 'package:wanandroid/fonts/IconF.dart';
 import 'package:wanandroid/pages/home/HomePage.dart';
 import 'package:wanandroid/pages/knowledge_systems/KnowledgeSystemsPage.dart';
 import 'package:wanandroid/pages/mine/MinePage.dart';
-import 'package:wanandroid/pages/project/ProjectPage.dart';
-import 'package:wanandroid/pages/wechat/WeChatPage.dart';
 
 class ApplicationPage extends StatefulWidget {
   @override
@@ -17,7 +15,7 @@ class ApplicationPage extends StatefulWidget {
 
 class _ApplicationPageState extends State<ApplicationPage>
     with SingleTickerProviderStateMixin {
-  int _page = 0;
+  int currentPageIndex = 0;
   late PageController _pageController;
 
   final List<BottomNavigationBarItem> _bottomTabs = <BottomNavigationBarItem>[
@@ -46,7 +44,7 @@ class _ApplicationPageState extends State<ApplicationPage>
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: this._page);
+    _pageController = PageController(initialPage: this.currentPageIndex);
   }
 
   @override
@@ -59,24 +57,40 @@ class _ApplicationPageState extends State<ApplicationPage>
   Widget build(BuildContext context) {
     User().refreshUserData();
     return Scaffold(
-      body: PageView(
-        physics: NeverScrollableScrollPhysics(),
+      key: ValueKey('application'),
+      body: IndexedStack(
         children: <Widget>[
           HomePage(),
-          ProjectPage(),
-          WeChatPage(),
           KnowledgeSystemsPage(),
           MinePage()
         ],
-        onPageChanged: onPageChanged,
-        controller: _pageController,
+        index: currentPageIndex,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: _bottomTabs,
-        currentIndex: _page,
-        fixedColor: GlobalConfig.colorPrimary,
-        type: BottomNavigationBarType.fixed,
-        onTap: onTap,
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        indicatorColor: Colors.amber,
+        selectedIndex: currentPageIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(Icons.article),
+            icon: Icon(Icons.article_outlined),
+            label: 'Articles',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.book),
+            icon: Icon(Icons.book_outlined),
+            label: '体系',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.person_2),
+            icon: Icon(Icons.person_2_outlined),
+            label: '我',
+          ),
+        ],
       ),
     );
   }
@@ -86,9 +100,9 @@ class _ApplicationPageState extends State<ApplicationPage>
         duration: const Duration(milliseconds: 300), curve: Curves.ease);
   }
 
-  void onPageChanged(int page) {
+  void onPageChanged(int index) {
     setState(() {
-      this._page = page;
+      this.currentPageIndex = index;
     });
   }
 }

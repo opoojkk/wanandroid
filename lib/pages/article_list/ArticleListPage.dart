@@ -21,13 +21,14 @@ class ArticleListPage extends StatefulWidget {
   final ShowQuickTop? showQuickTop;
   final bool? selfControl;
 
-  ArticleListPage({Key? key,
-    this.header,
-    required this.request,
-    this.emptyMsg,
-    this.selfControl = true,
-    this.showQuickTop,
-    this.keepAlive = false})
+  ArticleListPage(
+      {Key? key,
+      this.header,
+      required this.request,
+      this.emptyMsg,
+      this.selfControl = true,
+      this.showQuickTop,
+      this.keepAlive = false})
       : super(key: key);
 
   @override
@@ -63,7 +64,7 @@ class ArticleListPageState extends State<ArticleListPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var itemCount = ((null == _listData) ? 0 : _listData.length) +
+    var itemCount = _listData.length +
         (null == widget.header ? 0 : 1) +
         (_haveMoreData ? 1 : 0);
     if (itemCount <= 0) {
@@ -99,15 +100,15 @@ class ArticleListPageState extends State<ArticleListPage>
     );
     return (null == widget.showQuickTop)
         ? Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: body,
-      floatingActionButton: QuickTopFloatBtn(
-        key: _quickTopFloatBtnKey,
-        onPressed: () {
-          handleScroll(0.0);
-        },
-      ),
-    )
+            resizeToAvoidBottomInset: false,
+            body: body,
+            floatingActionButton: QuickTopFloatBtn(
+              key: _quickTopFloatBtnKey,
+              onPressed: () {
+                handleScroll(0.0);
+              },
+            ),
+          )
         : body;
   }
 
@@ -117,10 +118,7 @@ class ArticleListPageState extends State<ArticleListPage>
       _loadNextPage();
     }
     if (_screenHeight <= 0) {
-      _screenHeight = MediaQueryData
-          .fromView(ui.window)
-          .size
-          .height;
+      _screenHeight = MediaQueryData.fromView(ui.window).size.height;
     }
     if (scrollNotification.metrics.axisDirection == AxisDirection.down &&
         _screenHeight >= 10 &&

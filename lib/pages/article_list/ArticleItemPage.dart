@@ -27,16 +27,18 @@ class ArticleItemPage extends StatelessWidget {
       },
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 2.5),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(3.0)),
-          ),
-          elevation: 5.0,
-          child: Padding(
+        child: Column(children: [
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             child: _buildListViewItem(item),
           ),
-        ),
+          Divider(
+            height: 1.0,
+            indent: 10.0,
+            endIndent: 20.0,
+            color: Colors.grey.withOpacity(0.3),
+          ),
+        ]),
       ),
     );
   }
@@ -74,7 +76,7 @@ class ArticleItemPage extends StatelessWidget {
   }
 
   List<Widget> _buildItemLeftColumns(ArticleItemModel item) {
-    List<Widget> list =[];
+    List<Widget> list = [];
     list.add(Text(
       item.title,
       style: TextStyle(
