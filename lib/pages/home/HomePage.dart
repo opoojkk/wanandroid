@@ -36,7 +36,6 @@ class _HomePageState extends KeepAliveState<HomePage> {
       appBar: AppBar(
         title: Text(
           GlobalConfig.homeTab,
-          style: TextStyle(fontSize: 18),
         ),
         actions: <Widget>[
           IconButton(

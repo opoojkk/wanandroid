@@ -4,9 +4,9 @@ import 'package:wanandroid/api/CommonService.dart';
 import 'package:wanandroid/model/knowledge_systems/KnowledgeSystemsChildModel.dart';
 import 'package:wanandroid/model/knowledge_systems/KnowledgeSystemsModel.dart';
 import 'package:wanandroid/model/knowledge_systems/KnowledgeSystemsParentModel.dart';
-import 'package:wanandroid/pages/article_list/ArticleListPage.dart';
 
 import '../../common/GlobalConfig.dart';
+import 'KnowledgeSystemDetailPage.dart';
 
 class KnowledgeSystemsPage extends StatefulWidget {
   @override
@@ -105,10 +105,8 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ArticleListPage(
-              header: AppBar(
-                title: Text(childModel.name),
-              ),
+            builder: (context) => KnowledgeSystemDetailPage(
+              title: childModel.name,
               request: (page) {
                 return CommonService().getTreeItemList(
                     "${Api.TREES_DETAIL_LIST}$page/json?cid=${childModel.id}");
