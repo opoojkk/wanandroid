@@ -60,16 +60,13 @@ class _HomePageState extends KeepAliveState<HomePage> {
   Widget _buildBanner(BuildContext context) {
     if (_loading) {
       return Center();
-      return Center(
-        child: Text("Loading"),
-      );
     } else {
       double screenWidth = MediaQueryData.fromView(ui.window).size.width;
       return Container(
-        height: screenWidth * 500 / 900,
+        height: screenWidth * 9 / 16,
         width: screenWidth,
         child: Swiper(
-          itemHeight: screenWidth * 500 / 900,
+          itemHeight: screenWidth * 9 / 16,
           itemWidth: screenWidth,
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
@@ -85,8 +82,12 @@ class _HomePageState extends KeepAliveState<HomePage> {
               ),
             );
           },
+          duration: 500,
           itemCount: _bannerData.length,
-          pagination: SwiperPagination(),
+          pagination: SwiperPagination(
+            alignment: Alignment.bottomRight,
+            builder: SwiperPagination.rect,
+          ),
           autoplay: true,
         ),
       );
@@ -104,14 +105,7 @@ class _HomePageState extends KeepAliveState<HomePage> {
       }
     });
   }
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    print('Page disposed!');
-  }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

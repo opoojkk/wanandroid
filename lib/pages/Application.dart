@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wanandroid/common/GlobalConfig.dart';
 import 'package:wanandroid/common/User.dart';
-import 'package:wanandroid/fonts/IconF.dart';
 import 'package:wanandroid/pages/home/HomePage.dart';
 import 'package:wanandroid/pages/knowledge_systems/KnowledgeSystemsPage.dart';
 import 'package:wanandroid/pages/mine/MinePage.dart';
@@ -17,29 +15,6 @@ class _ApplicationPageState extends State<ApplicationPage>
     with SingleTickerProviderStateMixin {
   int currentPageIndex = 0;
   late PageController _pageController;
-
-  final List<BottomNavigationBarItem> _bottomTabs = <BottomNavigationBarItem>[
-    BottomNavigationBarItem(
-        icon: Icon(IconF.blog),
-        label: GlobalConfig.homeTab,
-        backgroundColor: GlobalConfig.colorPrimary),
-    BottomNavigationBarItem(
-        icon: Icon(IconF.project),
-        label: GlobalConfig.projectTab,
-        backgroundColor: GlobalConfig.colorPrimary),
-    BottomNavigationBarItem(
-        icon: Icon(IconF.wechat),
-        label: GlobalConfig.weChatTab,
-        backgroundColor: GlobalConfig.colorPrimary),
-    BottomNavigationBarItem(
-        icon: Icon(IconF.tree),
-        label: GlobalConfig.knowledgeSystemsTab,
-        backgroundColor: GlobalConfig.colorPrimary),
-    BottomNavigationBarItem(
-        icon: Icon(IconF.me),
-        label: GlobalConfig.mineTab,
-        backgroundColor: GlobalConfig.colorPrimary),
-  ];
 
   @override
   void initState() {
@@ -59,11 +34,7 @@ class _ApplicationPageState extends State<ApplicationPage>
     return Scaffold(
       key: ValueKey('application'),
       body: IndexedStack(
-        children: <Widget>[
-          HomePage(),
-          KnowledgeSystemsPage(),
-          MinePage()
-        ],
+        children: <Widget>[HomePage(), KnowledgeSystemsPage(), MinePage()],
         index: currentPageIndex,
       ),
       bottomNavigationBar: NavigationBar(
@@ -72,7 +43,6 @@ class _ApplicationPageState extends State<ApplicationPage>
             currentPageIndex = index;
           });
         },
-        indicatorColor: Colors.amber,
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(

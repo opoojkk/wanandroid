@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wanandroid/fonts/IconF.dart';
 import 'package:wanandroid/model/article_list/ArticleItemModel.dart';
@@ -36,12 +37,16 @@ class _WebViewState extends State<WebViewPage> {
   Widget build(BuildContext context) {
     if (_controller == null) {
       _controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setBackgroundColor(Colors.transparent)
+        ..enableZoom(false)
+        ..setUserAgent(
+            "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.62 XWEB/2693 MMWEBSDK/201201 Mobile Safari/537.36 MMWEBID/6170 MicroMessenger/7.0.22.1820(0x27001636)")
         ..loadRequest(
             Uri.parse(widget.url ?? widget.articleBean?.link ?? "about:blank"));
     }
 
     return Scaffold(
-      // backgroundColor: Colors.green,
       appBar: AppBar(
         title: Text(
           toastMsg ?? widget.getTitle(),
@@ -98,10 +103,41 @@ class _WebViewState extends State<WebViewPage> {
   }
 
   Widget _buildOpenWithBrowser() {
-    return IconButton(
-      icon: Icon(IconF.browser),
-      onPressed: () {
-        launch(widget.getUrl());
+    return PopupMenuButton(
+      icon: Icon(Icons.more_vert),
+      itemBuilder: (BuildContext context) {
+        return [
+          PopupMenuItem(
+            value: 'open_browser',
+            child: Text('在浏览器中打开'),
+          ),
+          PopupMenuItem(
+            value: 'share',
+            child: Text('分享'),
+          ),
+          PopupMenuItem(
+            value: 'copy_link',
+            child: Text('复制链接'),
+          ),
+        ];
+      },
+      onSelected: (value) {
+        switch (value) {
+          case 'open_browser':
+            // 使用url_launcher打开浏览器
+            launchUrl(Uri.parse(widget.getUrl()),
+                mode: LaunchMode.externalApplication);
+            break;
+          case 'share':
+            // Share.share(widget.getUrl(), subject: widget.getTitle());
+            break;
+          case 'copy_link':
+            Clipboard.setData(ClipboardData(text: widget.getUrl()));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('链接已复制到剪贴板')),
+            );
+            break;
+        }
       },
     );
   }

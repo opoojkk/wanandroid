@@ -2,9 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart' hide Router;
 import 'package:flutter/services.dart';
 import 'package:wanandroid/api/Api.dart';
-import 'package:wanandroid/common/GlobalConfig.dart';
 import 'package:wanandroid/common/Router.dart';
-import 'package:wanandroid/fonts/IconF.dart';
 import 'package:wanandroid/model/article_list/ArticleItemModel.dart';
 import 'package:wanandroid/utils/StringUtil.dart';
 import 'package:wanandroid/widget/StrokeWidget.dart';
@@ -26,7 +24,7 @@ class ArticleItemPage extends StatelessWidget {
         Router().openArticle(context, item);
       },
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 2.5),
+        padding: EdgeInsets.symmetric(vertical: 2.5, horizontal: 2.5),
         child: Column(children: [
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -34,9 +32,9 @@ class ArticleItemPage extends StatelessWidget {
           ),
           Divider(
             height: 1.0,
-            indent: 10.0,
+            indent: 20.0,
             endIndent: 20.0,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
           ),
         ]),
       ),
@@ -77,19 +75,18 @@ class ArticleItemPage extends StatelessWidget {
 
   List<Widget> _buildItemLeftColumns(ArticleItemModel item) {
     List<Widget> list = [];
-    list.add(Text(
-      item.title,
-      style: TextStyle(
-          fontSize: 16.0,
-          color: GlobalConfig.color_black,
-          fontWeight: FontWeight.w500),
-      textAlign: TextAlign.left,
+    list.add(Padding(
+      padding: EdgeInsets.only(bottom: 2),
+      child: Text(
+        item.title,
+        style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),
+        textAlign: TextAlign.left,
+      ),
     ));
     if (item.desc.length > item.title.length) {
       list.add(Text(
         item.desc,
         maxLines: 3,
-        style: TextStyle(color: GlobalConfig.color_dark_gray, fontSize: 13.0),
       ));
     }
     var author = item.author;
@@ -104,13 +101,17 @@ class ArticleItemPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Icon(
-            IconF.time,
+            Icons.access_time,
             size: 13.0,
-            color: GlobalConfig.color_dark_gray,
+            // color: GlobalConfig.color_dark_gray,
           ),
           Text(" ${item.niceDate} $author",
               style: TextStyle(
-                  color: GlobalConfig.color_dark_gray, fontSize: 13.0))
+                  // color: GlobalConfig.color_dark_gray,
+                  fontSize: 13.0,
+                  fontWeight: FontWeight.w200,
+                  color: Colors.black.withValues(alpha: 0.7)) //灰色
+              )
         ],
       ),
     ));
@@ -132,12 +133,12 @@ class ArticleItemPage extends StatelessWidget {
       list.add(StrokeWidget(
           strokeWidth: 0.5,
           edgeInsets: EdgeInsets.symmetric(horizontal: 2.0, vertical: 0.0),
-          color: GlobalConfig.color_tags,
+          // color: GlobalConfig.color_tags,
           childWidget: Text(
             tag.name,
             style: TextStyle(
                 fontSize: 11.0,
-                color: GlobalConfig.color_tags,
+                color: Colors.black.withValues(alpha: 0.7),
                 fontWeight: FontWeight.w100),
           )));
     });
@@ -149,7 +150,11 @@ class ArticleItemPage extends StatelessWidget {
       list.add(Text(
         chapterNameStr,
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 13.0, color: GlobalConfig.color_dark_gray),
+        style: TextStyle(
+          fontSize: 13.0,
+          //   // color: GlobalConfig.color_dark_gray
+          fontWeight: FontWeight.w200,
+        ),
       ));
     }
     return list;

@@ -1,13 +1,12 @@
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:wanandroid/api/Api.dart';
 import 'package:wanandroid/api/CommonService.dart';
-import 'package:wanandroid/common/GlobalConfig.dart';
 import 'package:wanandroid/model/knowledge_systems/KnowledgeSystemsChildModel.dart';
 import 'package:wanandroid/model/knowledge_systems/KnowledgeSystemsModel.dart';
 import 'package:wanandroid/model/knowledge_systems/KnowledgeSystemsParentModel.dart';
 import 'package:wanandroid/pages/article_list/ArticleListPage.dart';
+
+import '../../common/GlobalConfig.dart';
 
 class KnowledgeSystemsPage extends StatefulWidget {
   @override
@@ -18,11 +17,7 @@ class KnowledgeSystemsPage extends StatefulWidget {
 
 class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  double _screenWidth = MediaQueryData.fromView(ui.window).size.width;
   late KnowledgeSystemsModel _treeModel;
-  late TabController _tabControllerOutter;
-  Map<int, TabController> _tabControllerInnerMaps = Map();
-  late KnowledgeSystemsParentModel _currentTreeRootModel;
 
   var loading = true;
 
@@ -43,129 +38,17 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
         child: Text("loading..."),
       );
     }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          GlobalConfig.knowledgeSystemsTab,
-          style: TextStyle(color: Colors.grey[700], fontSize: 16.0),
-        ),
-        centerTitle: true,
-        bottom: _buildTitleBottom(),
+        title: Text(GlobalConfig.knowledgeSystemsTab),
       ),
-      body: _buildBody(_currentTreeRootModel),
-    );
-  }
-
-  PreferredSize? _appBarBottom;
-
-  PreferredSize _buildTitleBottom() {
-    if (null == _appBarBottom)
-      _appBarBottom = PreferredSize(
-        child: _buildTitleTabs(),
-        preferredSize: Size(_screenWidth, kToolbarHeight * 2),
-      );
-    return _appBarBottom!;
-  }
-
-  Widget _buildTitleTabs() {
-    _tabControllerOutter =
-        TabController(length: _treeModel.data.length ?? 0, vsync: this);
-    _tabControllerOutter.addListener(() {
-      setState(() {
-        _currentTreeRootModel = _treeModel.data[_tabControllerOutter.index];
-      });
-    });
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        SizedBox(
-          child: TabBar(
-            controller: _tabControllerOutter,
-            labelColor: Colors.grey[700],
-            isScrollable: true,
-            unselectedLabelColor: Colors.grey[400],
-            indicatorSize: TabBarIndicatorSize.label,
-            indicatorPadding: EdgeInsets.only(bottom: 2.0),
-            indicatorWeight: 1.0,
-            indicatorColor: Colors.grey[700],
-            tabs: _buildRootTabs(),
-          ),
-          width: _screenWidth,
-          height: kToolbarHeight,
-        ),
-        SizedBox(
-          child: TabBarView(
-            children: _buildSecondTitle(),
-            controller: _tabControllerOutter,
-          ),
-          width: _screenWidth,
-          height: kToolbarHeight,
-        ),
-      ],
-    );
-  }
-
-  List<Widget> _buildRootTabs() {
-    return _treeModel.data.map((KnowledgeSystemsParentModel model) {
-          return Tab(
-            text: model.name,
-          );
-        }).toList() ??
-        [];
-  }
-
-  List<Widget> _buildSecondTitle() {
-    return _treeModel.data.map(_buildSingleSecondTitle).toList() ?? [];
-  }
-
-  Widget _buildSingleSecondTitle(KnowledgeSystemsParentModel model) {
-    if (null == _tabControllerInnerMaps[model.id])
-      _tabControllerInnerMaps[model.id] =
-          TabController(length: model.children.length, vsync: this);
-    return TabBar(
-      controller: _tabControllerInnerMaps[model.id],
-      labelColor: Colors.grey[700],
-      isScrollable: true,
-      unselectedLabelColor: Colors.grey[400],
-      indicatorSize: TabBarIndicatorSize.label,
-      indicatorPadding: EdgeInsets.only(bottom: 2.0),
-      indicatorWeight: 1.0,
-      indicatorColor: Colors.grey[700],
-      tabs: _buildSecondTabs(model),
-    );
-  }
-
-  List<Widget> _buildSecondTabs(KnowledgeSystemsParentModel model) {
-    return model.children.map((KnowledgeSystemsChildModel model) {
-      return Tab(
-        text: model.name,
-      );
-    }).toList();
-  }
-
-  Widget _buildBody(KnowledgeSystemsParentModel model) {
-    if (null == _tabControllerInnerMaps[model.id])
-      _tabControllerInnerMaps[model.id] =
-          TabController(length: model.children.length, vsync: this);
-    return TabBarView(
-      key: Key("tb${model.id}"),
-      children: _buildPages(model),
-      controller: _tabControllerInnerMaps[model.id],
-    );
-  }
-
-  List<Widget> _buildPages(KnowledgeSystemsParentModel model) {
-    return model.children.map(_buildSinglePage).toList() ?? [];
-  }
-
-  Widget _buildSinglePage(KnowledgeSystemsChildModel model) {
-    return ArticleListPage(
-      key: Key("${model.id}"),
-      request: (page) {
-        return CommonService().getTreeItemList(
-            "${Api.TREES_DETAIL_LIST}$page/json?cid=${model.id}");
-      },
+      body: ListView.builder(
+          itemCount: _treeModel.data.length,
+          itemBuilder: (context, index) {
+            KnowledgeSystemsParentModel model = _treeModel.data[index];
+            return _buildCategoryItem(model);
+          }),
     );
   }
 
@@ -175,18 +58,65 @@ class _KnowledgeSystemsPageState extends State<KnowledgeSystemsPage>
         setState(() {
           loading = false;
           _treeModel = _bean;
-          _currentTreeRootModel = _treeModel.data[0];
         });
       }
     });
   }
 
-  @override
-  void dispose() {
-    // _tabControllerOutter.dispose();
-    _tabControllerInnerMaps.forEach((_, controller) {
-      controller.dispose();
-    });
-    super.dispose();
+  Widget _buildCategoryItem(KnowledgeSystemsParentModel model) {
+    return Column(
+      children: <Widget>[
+        Padding(
+            padding: const EdgeInsets.only(left: 14, top: 20),
+            child: Text(
+              model.name,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            )),
+        SizedBox(
+          height: 10.0,
+        ),
+        Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Wrap(
+              direction: Axis.horizontal,
+              // 水平排列（默认值）
+              alignment: WrapAlignment.start,
+              // 主轴对齐方式
+              spacing: 8.0,
+              // 水平间距
+              runSpacing: 12.0,
+              // 行间距（垂直间距）
+              children: List.generate(model.children.length, (index) {
+                final childModel = model.children[index];
+                return _buildTag(childModel);
+              }),
+            ))
+      ],
+      crossAxisAlignment: CrossAxisAlignment.start,
+    );
+  }
+
+  ActionChip _buildTag(KnowledgeSystemsChildModel childModel) {
+    return ActionChip(
+      label: Text(
+        childModel.name,
+      ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ArticleListPage(
+              header: AppBar(
+                title: Text(childModel.name),
+              ),
+              request: (page) {
+                return CommonService().getTreeItemList(
+                    "${Api.TREES_DETAIL_LIST}$page/json?cid=${childModel.id}");
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 }
