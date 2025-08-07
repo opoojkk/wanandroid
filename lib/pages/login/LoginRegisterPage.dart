@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart' hide Router;
-import 'package:wanandroid/common/GlobalConfig.dart';
 import 'package:wanandroid/common/Router.dart';
 import 'package:wanandroid/common/Snack.dart';
 import 'package:wanandroid/common/User.dart';
@@ -27,8 +24,8 @@ class _LoginRegisterPagePageState extends State<LoginRegisterPage> {
     return Scaffold(
       appBar: AppBar(
         leading: BackBtn(),
-        centerTitle: true,
         title: Text(isLogin ? "登录" : "注册"),
+        actions: [_buildRegBtn()],
       ),
       body: Builder(builder: (ct) {
         return ListView(
@@ -42,10 +39,10 @@ class _LoginRegisterPagePageState extends State<LoginRegisterPage> {
             SizedBox(height: 24.0),
             _buildLoginBtn(ct),
             SizedBox(height: 10.0),
-            Container(
-              child: _buildRegBtn(),
-              alignment: Alignment.centerRight,
-            ),
+            // Container(
+            //   child: _buildRegBtn(),
+            //   alignment: Alignment.centerRight,
+            // ),
           ],
         );
       }),
@@ -53,31 +50,23 @@ class _LoginRegisterPagePageState extends State<LoginRegisterPage> {
   }
 
   Widget _buildLoginBtn(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(8.0),
-        elevation: 4.0,
-        textStyle: TextStyle(color: Colors.white),
-        backgroundColor: GlobalConfig.colorPrimary,
-      ),
+    return FilledButton(
       child: Text(isLogin ? "登录" : "注册并登录"),
       onPressed: () {
         var _userNameStr = _userNameController.text;
         var _psdStr = _psdController.text;
-        if (_userNameStr.length < 6 ||
-            _psdStr.length < 6) {
-          Snack.show(context, "账号/密码不符合标准");
+        if (_userNameStr.length < 6 || _psdStr.length < 6) {
+          Snack.show(context, "账号和密码均需大于6位");
         } else {
           User().userName = _userNameStr;
           User().password = _psdStr;
-          var callback = (bool loginOK, String errorMsg) {
+          var callback = (bool loginOK, String? errorMsg) {
             if (loginOK) {
-              Snack.show(context, "登录成功");
-              Timer(Duration(milliseconds: 400), () {
-                Router().back(context);
-              });
+              Router().back(context);
             } else {
-              Snack.show(context, errorMsg);
+              if (errorMsg != null && errorMsg.isNotEmpty) {
+                Snack.show(context, errorMsg);
+              }
             }
           };
           isLogin
@@ -107,10 +96,9 @@ class _LoginRegisterPagePageState extends State<LoginRegisterPage> {
   }
 
   Widget _buildRegBtn() {
-    return ElevatedButton(
+    return FilledButton(
       child: Text(
-        isLogin ? '注册新账号' : '直接登录',
-        style: TextStyle(fontSize: 15.0, color: Colors.black54),
+        isLogin ? '注册' : '登录',
       ),
       onPressed: () {
         setState(() {

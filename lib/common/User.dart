@@ -95,7 +95,7 @@ class User {
         });
         Sp.putCookie(cookie);
         Sp.putCookieExpires(expires.toIso8601String());
-        callback?.call(true, null);
+        callback?.call(true, "");
       } else {
         callback?.call(false, userModel.errorMsg);
       }

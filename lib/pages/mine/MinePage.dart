@@ -1,14 +1,12 @@
-import 'dart:ui' as ui;
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart' hide Router;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wanandroid/api/Api.dart';
 import 'package:wanandroid/common/GlobalConfig.dart';
 import 'package:wanandroid/common/Router.dart';
 import 'package:wanandroid/common/User.dart';
-import 'package:wanandroid/pages/article_list/ArticleListPage.dart';
-import 'package:wanandroid/widget/EmptyHolder.dart';
-import 'package:wanandroid/widget/QuickTopFloatBtn.dart';
+import 'package:wanandroid/pages/about/AboutPage.dart';
+import 'package:wanandroid/pages/mine/MineItem.dart';
 
 class MinePage extends StatefulWidget {
   @override
@@ -18,49 +16,113 @@ class MinePage extends StatefulWidget {
 }
 
 class _MinePageState extends State<MinePage> {
-  double _screenWidth = MediaQueryData.fromView(ui.window).size.width;
-  GlobalKey<QuickTopFloatBtnState> _quickTopFloatBtnKey = new GlobalKey();
-  late ArticleListPage _itemListPage;
-  GlobalKey<ArticleListPageState> _itemListPageKey = new GlobalKey();
-  late ScrollController _controller;
-
   @override
   Widget build(BuildContext context) {
-    _controller = FixedExtentScrollController();
+    final List<MineItem> items = [
+      MineItem(
+          title: '收藏文章',
+          icon: Icons.favorite,
+          onTap: (context) {
+            Router().openFavorite(context);
+          }),
+      // MineItem(
+      //     title: '设置',
+      //     icon: Icons.settings,
+      //     onTap: (context) {
+      //       _snackbarNotImplement(context);
+      //     }),
+      MineItem(
+          title: '关于',
+          icon: Icons.info,
+          onTap: (context) {
+            return Navigator.of(context)
+                .push(MaterialPageRoute(builder: (BuildContext context) {
+              return AboutPage();
+            }));
+          }),
+      MineItem(
+          title: 'Github仓库',
+          icon: Icons.coffee,
+          onTap: (context) {
+            launchUrl(Uri.parse("https://github.com/opoojkk/wanandroid"),
+                mode: LaunchMode.externalApplication);
+          }),
+    ];
+
     return Scaffold(
-      body: NestedScrollView(
-          controller: _controller,
-          headerSliverBuilder: (BuildContext context, bool boxIsScrolled) {
-            return <Widget>[
-              SliverAppBar(
-                pinned: true,
-                expandedHeight: _screenWidth * 2 / 3,
-                forceElevated: true,
-                flexibleSpace: FlexibleSpaceBar(
-                    centerTitle: true,
-                    background: _buildHead(context),
-                    title: Text(getUserName())),
-              ),
-            ];
-          },
-          body: User().isLogin()
-              ? _buildMineBody()
-              : EmptyHolder(
-                  msg: "要查看收藏的文章请先登录哈",
-                )),
-      floatingActionButton: QuickTopFloatBtn(
-        key: _quickTopFloatBtnKey,
-        onPressed: () {
-          _itemListPageKey.currentState
-              ?.handleScroll(0.0, controller: _controller);
+      body: Column(
+        children: [
+          _buildHead(context),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 10),
+            // padding: const EdgeInsets.all(0),
+            child: Container(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: items.length,
+                  // separatorBuilder: (context, index) => const Divider(
+                  //       height: 1,
+                  //       thickness: 1.5,
+                  //       endIndent: 16,
+                  //     ),
+                  itemBuilder: (context, index) {
+                    MineItem item = items[index];
+                    return _buildListItem(context, items, index, item);
+                  }),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        child: Text(
+          'have a nice day!',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black.withValues(alpha: 0.4)),
+        ),
+        padding: EdgeInsets.only(bottom: 8),
+      ),
+    );
+  }
+
+  Material _buildListItem(
+      BuildContext context, List<MineItem> items, int index, MineItem item) {
+    return Material(
+      child: InkWell(
+        onTap: () {
+          item.onTap?.call(context);
         },
+        borderRadius: BorderRadius.circular(8), // 波纹圆角
+        child: Container(
+          height: 55,
+          margin: EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            children: [
+              Icon(
+                item.icon,
+                size: 20,
+                color: Colors.black.withValues(alpha: 0.6),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                item.title,
+                style: const TextStyle(fontSize: 16),
+              ),
+              const Spacer(),
+              Icon(
+                Icons.keyboard_arrow_right,
+                color: Colors.black.withValues(alpha: 0.6),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildHead(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: GlobalConfig.colorPrimary),
+      // decoration: BoxDecoration(color: GlobalConfig.colorPrimary),
       child: GestureDetector(
         onTap: () {
           if (User().isLogin())
@@ -82,22 +144,71 @@ class _MinePageState extends State<MinePage> {
   }
 
   Widget _buildAvatar() {
-    return Center(
-      child: Container(
-        width: _screenWidth / 3,
-        height: _screenWidth / 3,
-        decoration: BoxDecoration(
-          color: const Color(0xffffff),
-          image: DecorationImage(
-            image: CachedNetworkImageProvider(
-//                "${Api.AVATAR_GITHUB}${getUserName().hashCode.toString()}.png"),
-                "${Api.AVATAR_CODING}${getUserName().hashCode % 20 + 1}.png"),
-//                "${Api.AVATAR_LEGO}${getUserName().hashCode.toString().substring(0, 1)}.jpg"),
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.all(new Radius.circular(500.0)),
+    return SafeArea(
+        child: Column(
+      spacing: 10,
+      children: [
+        SizedBox(
+          height: 45,
         ),
-      ),
+        _buildUserInfo(),
+        SizedBox(
+          height: 0,
+        ),
+      ],
+    ));
+  }
+
+  Widget _buildUserInfo() {
+    if (User().isLogin()) {
+      return _avatarTemplateLayout(
+          User().userName ?? '',
+          "${Api.AVATAR_CODING}${getUserName().hashCode % 20 + 1}.png",
+          '随便逛一逛吧~');
+    } else {
+      return _avatarTemplateLayout(
+          '未登录',
+          "${Api.AVATAR_CODING}${getUserName().hashCode % 20 + 1}.png",
+          '登录之后更多精彩~');
+    }
+  }
+
+  Widget _avatarTemplateLayout(String name, String avatar, String description) {
+    return Row(
+      children: [
+        SizedBox(width: 20),
+        Container(
+          width: 70,
+          height: 70,
+          decoration: BoxDecoration(
+            color: const Color(0xffffff),
+            image: DecorationImage(
+              image: CachedNetworkImageProvider(avatar),
+              fit: BoxFit.cover,
+            ),
+            borderRadius: BorderRadius.all(new Radius.circular(30.0)),
+          ),
+        ),
+        SizedBox(
+          width: 16,
+        ),
+        Column(
+          spacing: 6,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              name,
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+            ),
+            Text(
+              description,
+              style: TextStyle(
+                  fontSize: 13, color: Colors.black.withValues(alpha: 0.5)),
+            )
+          ],
+        )
+      ],
     );
   }
 
@@ -127,14 +238,14 @@ class _MinePageState extends State<MinePage> {
             });
             Navigator.pop(context);
           },
-          child: Text("OK"),
+          child: Text("确定"),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
               elevation: 0.0,
               textStyle: TextStyle(color: GlobalConfig.colorPrimary),
               backgroundColor: Colors.transparent),
-          child: Text("No No No"),
+          child: Text("点错了"),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -145,15 +256,5 @@ class _MinePageState extends State<MinePage> {
 
   String getUserName() {
     return (!User().isLogin()) ? "Login" : User().userName!;
-  }
-
-  Widget _buildMineBody() {
-    return _itemListPage;
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }
